@@ -21,8 +21,11 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "@/hooks/use-toast"
 import verifyToken from "@/actions/verify"
+import { generateAccessToken } from "@/actions/token"
+import { redirect } from "next/navigation"
 
 const FormSchema = z.object({
+  target: z.string(),
   otp: z.string().min(6, {
     message: "OTP必须为六位数字",
   }),
@@ -44,6 +47,9 @@ async function onSubmit(data: z.infer<typeof FormSchema>) {
       title: "登录成功",
       description: "正在重定向到目标页面",
     })
+
+    const accessToken = await generateAccessToken()
+    redirect(`${data.target}?accessToken=${accessToken}`)
   }
 }
 
@@ -53,11 +59,12 @@ export function LoginForm({
   ...props
 }: {
   className?: string
-  target?: string
+  target: string
 } & React.ComponentPropsWithoutRef<"div">) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
+      target,
       otp: "",
     },
   })
