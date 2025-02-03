@@ -5,7 +5,11 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const accessToken = searchParams.get('accessToken')
 
-    const isValid = await verifyAccessToken(accessToken as string)
+    try {
+        const isValid = await verifyAccessToken(accessToken as string)
 
-    return new Response(isValid ? "true" : "false")
+        return new Response(JSON.stringify({ isValid }))
+    } catch (error) {
+        return new Response(JSON.stringify({ isValid: false, error }))
+    }
 }
