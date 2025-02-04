@@ -1,6 +1,7 @@
 "use server"
 
 import speakeasy from "speakeasy"
+import { generateAccessToken } from "./token"
 
 export default async function verifyToken(token: string) {
     const isValid = speakeasy.totp.verify({
@@ -9,5 +10,9 @@ export default async function verifyToken(token: string) {
         token: token,
     })
 
-    return isValid
+    if (!isValid) {
+        return null
+    }
+
+    return generateAccessToken()
 }

@@ -21,7 +21,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "@/hooks/use-toast"
 import verifyToken from "@/actions/verify"
-import { generateAccessToken } from "@/actions/token"
 import { redirect } from "next/navigation"
 
 const FormSchema = z.object({
@@ -32,9 +31,9 @@ const FormSchema = z.object({
 })
 
 async function onSubmit(data: z.infer<typeof FormSchema>) {
-  const isValid = await verifyToken(data.otp)
+  const accessToken = await verifyToken(data.otp)
 
-  if (!isValid) {
+  if (!accessToken) {
     toast({
       title: "OTP无效",
       description: "请检查您的OTP并重试",
@@ -42,13 +41,12 @@ async function onSubmit(data: z.infer<typeof FormSchema>) {
     })
   }
 
-  if (isValid) {
+  if (accessToken) {
     toast({
       title: "登录成功",
       description: "正在重定向到目标页面",
     })
 
-    const accessToken = await generateAccessToken()
     redirect(`${data.target}?accessToken=${accessToken}`)
   }
 }

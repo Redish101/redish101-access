@@ -20,6 +20,9 @@ importers:
 
   apps/example-next:
     dependencies:
+      '@redish101-access/nextjs':
+        specifier: workspace:*
+        version: link:../../packages/nextjs
       next:
         specifier: 15.1.6
         version: 15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
