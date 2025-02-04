@@ -1,0 +1,26 @@
+{
+  "name": "@redish101-access/nextjs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.mjs",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "dev": "unbuild --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "unbuild": "^3.3.1"
+  }
+}
