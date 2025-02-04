@@ -5,20 +5,26 @@ import { cookies } from 'next/headers'
 export function redish101AccessMiddleware(serverUrl: string) {
     return async (request: NextRequest) => {
         const cookieStore = await cookies()
-        const accessToken = cookieStore.get('accessToken')
+        const searchParams = request.nextUrl.searchParams
+        const accessTokenInQuery = searchParams.get('accessToken')
 
-        if (!accessToken) {
-            return NextResponse.redirect(`${serverUrl}/?target=${request.nextUrl.pathname}`)
+        if (accessTokenInQuery) {
+            cookieStore.set('accessToken', accessTokenInQuery)
         }
 
-        const res = await fetch(`${serverUrl}/api/verifyAccessToken?accessToken=${accessToken}`)
+        const accessTokenInCookie = cookieStore.get('accessToken')
+
+        if (!accessTokenInCookie) {
+            return NextResponse.redirect(`${serverUrl}/?target=${request.nextUrl.toString()}`)
+        }
+
+        const res = await fetch(`${serverUrl}/api/verifyAccessToken?accessToken=${accessTokenInCookie.value}`)
         const data = await res.json()
 
         if (!data.isValid) {
-            return NextResponse.redirect(`${serverUrl}/?target=${request.nextUrl.pathname}`)
+            return NextResponse.redirect(`${serverUrl}/?target=${request.nextUrl.toString()}`)
         }
 
         return NextResponse.next()
     }
 }
-
